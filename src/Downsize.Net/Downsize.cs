@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
 
@@ -32,7 +33,7 @@ namespace DownsizeNet
                         // (Provided we're in uninitialised state and the next
                         // character is a word character, explamation mark or slash)
                         if (parseState == ParseState.Uninitialised &&
-                            Regex.IsMatch(text[pointer + 1].ToString(), "[a-z0-9\\-\\_\\/\\!]"))
+                            text[pointer + 1].ToString().IsMatch("[a-z0-9\\-_/\\!]"))
                         {
                             if (IsAtLimit())
                             {
@@ -45,7 +46,7 @@ namespace DownsizeNet
 
                         break;
                     case '!':
-                        if (parseState == ParseState.TagCommenced && text[pointer + 1] == '<')
+                        if (parseState == ParseState.TagCommenced && text[pointer - 1] == '<')
                         {
                             parseState = ParseState.Comment;
                         }
@@ -57,7 +58,7 @@ namespace DownsizeNet
 
                         break;
                     case '\"':
-                        if (parseState == ParseState.Comment)
+                        if (parseState == ParseState.TagString)
                         {
                             parseState = ParseState.TagCommenced;
                         }
@@ -104,7 +105,7 @@ namespace DownsizeNet
                                 // tags. If the text to be truncated contains
                                 // malformed nesting, we just close what we're
                                 // permitted to and clean up at the end.
-                                if (GetTagName(stack.ElementAt(stack.Count - 1)) == tagName)
+                                if (GetTagName(stack.First()) == tagName)
                                 {
                                     stack.Pop();
                                 }
@@ -132,7 +133,7 @@ namespace DownsizeNet
                         }
                         else if (parseState == ParseState.Comment)
                         {
-                            if (text.Substring(pointer - 2, pointer) == "--")
+                            if (text.Substring(pointer - 2, 2) == "--")
                             {
                                 parseState = ParseState.Uninitialised;
                                 truncatedText += tagBuffer;
@@ -270,19 +271,20 @@ namespace DownsizeNet
             return $"</{tagName}>";
         }
 
+        [DebuggerStepThrough]
         private static string GetTagName(string tag)
         {
-            var tagName = Regex.Matches(tag, "<\\/*([a-z0-9\\:\\-\\_]+)", RegexOptions.IgnoreCase);
-            return tagName.Count > 0 ? tagName[1].Value : null;
+            var tagName = tag.Match("</*([a-z0-9\\:\\-_]+)", RegexOptions.IgnoreCase);
+            return tagName.Success ? tagName.Groups[1].Value : null;
         }
 
         private enum ParseState
         {
-            Uninitialised,
-            TagCommenced,
-            TagString,
-            TagStringSingle,
-            Comment
+            Uninitialised = 0,
+            TagCommenced = 1,
+            TagString = -1,
+            TagStringSingle = -2,
+            Comment = -3
         }
     }
 }

@@ -11,7 +11,7 @@
     <PackageLicenseUrl>https://www.gnu.org/licenses/gpl.html#content</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/Magentaize/Downsize.Net</PackageProjectUrl>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <RepositoryUrl></RepositoryUrl>
   </PropertyGroup>
 
