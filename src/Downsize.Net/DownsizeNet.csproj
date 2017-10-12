@@ -2,6 +2,17 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <PackageId>Downsize.Net</PackageId>
+    <Authors>Magentaize</Authors>
+    <Product>Downsize.Net</Product>
+    <Description>Tag-safe HTML and XML text-truncation!</Description>
+    <Company />
+    <Copyright>Copyright © 2017 Magentaize</Copyright>
+    <PackageLicenseUrl>https://www.gnu.org/licenses/gpl.html#content</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/Magentaize/Downsize.Net</PackageProjectUrl>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <RepositoryUrl></RepositoryUrl>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
