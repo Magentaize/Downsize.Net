@@ -13,7 +13,8 @@ namespace DownsizeNet
         internal bool KeepContext { get; set; }
         internal int Limit { get; set; }
 
-        public DownsizeOptions(int words=-1,int characters=-1,bool round=false, Regex wordChars=null,string append = null)
+        public DownsizeOptions(int words = -1, int characters = -1, bool round = false, Regex wordChars = null,
+            string append = null)
         {
             Append = append;
             if (words <= 0 && characters <= 0)

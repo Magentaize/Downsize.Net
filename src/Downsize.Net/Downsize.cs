@@ -173,7 +173,7 @@ namespace DownsizeNet
             // TODO: what should the whitespace behavior be?
             truncatedText = truncatedText.Trim();
 
-            if (options.Append!=null && IsAtLimit())
+            if (options.Append != null && IsAtLimit())
             {
                 truncatedText += options.Append;
             }
@@ -182,7 +182,7 @@ namespace DownsizeNet
             truncatedText += tagBuffer;
 
             // Balance anything still left on the stack
-            while (stack.Count>0)
+            while (stack.Count > 0)
             {
                 truncatedText += CloseTag(stack.Pop());
             }
@@ -207,7 +207,7 @@ namespace DownsizeNet
 
                 for (; stackIndex < stack.Count; stackIndex++)
                 {
-                    if(Convert.ToBoolean(options.ContextualTags.IndexOf(GetTagName(stack.ElementAt(stackIndex)))))
+                    if (Convert.ToBoolean(options.ContextualTags.IndexOf(GetTagName(stack.ElementAt(stackIndex)))))
                         return false;
                 }
 
@@ -225,7 +225,7 @@ namespace DownsizeNet
                 {
                     case CountType.Words:
                         bool tempCountState;
-                        if ((tempCountState=options.WordChars.IsMatch(chr))!=trackedState.CountState)
+                        if ((tempCountState = options.WordChars.IsMatch(chr)) != trackedState.CountState)
                         {
                             trackedState.CountState = tempCountState;
 

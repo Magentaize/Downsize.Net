@@ -13,7 +13,9 @@ namespace UnitTest
             var options = new DownsizeOptions(words: 26);
             var result = Downsize.Substring(excerpt, options);
 
-            Assert.Equal("Hey! Welcome to Ghost, it's great to have you :) We know that first impressions are important, so we've populated your new site with some initial Getting", result);
+            Assert.Equal(
+                "Hey! Welcome to Ghost, it's great to have you :) We know that first impressions are important, so we've populated your new site with some initial Getting",
+                result);
         }
     }
 }
