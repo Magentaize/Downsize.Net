@@ -1,10 +1,9 @@
 ﻿using System.Diagnostics;
 using System.Text;
-using DownsizeNet;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace UnitTest
+namespace DownsizeNet.Test
 {
     public class PerformanceTest
     {
@@ -30,7 +29,7 @@ namespace UnitTest
             sw.Start();
 
             var options = new DownsizeOptions(words: 5);
-            for (var i = 0; i < 1000000; i++)
+            for (var i = 0; i < 100000; i++)
             {
                 Downsize.Substring(perfTestSeed, options);
             }

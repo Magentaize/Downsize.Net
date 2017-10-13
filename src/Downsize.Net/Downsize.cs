@@ -53,11 +53,6 @@ namespace DownsizeNet
                         }
 
                         break;
-                    case '-':
-                        if (parseState == ParseState.Comment)
-                            parseState = ParseState.Comment;
-
-                        break;
                     case '\"':
                         if (parseState == ParseState.TagString)
                         {
