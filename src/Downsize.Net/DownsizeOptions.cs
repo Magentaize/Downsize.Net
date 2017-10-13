@@ -14,14 +14,14 @@ namespace DownsizeNet
         internal int Limit { get; set; }
 
         public DownsizeOptions(int words = -1, int characters = -1, bool round = false, Regex wordChars = null,
-            string append = null)
+            IList<string> contextualTags = null, string append = null)
         {
             Append = append;
-            if (words <= 0 && characters <= 0)
+            if (words < 0 && characters <= 0)
             {
                 throw new ArgumentOutOfRangeException("\"words\" or \"characters\" must be greater than ZERO.");
             }
-            if (words > 0)
+            if (words >= 0)
             {
                 CountType = CountType.Words;
                 Limit = words;
@@ -36,17 +36,18 @@ namespace DownsizeNet
 
             if (round)
             {
-                ContextualTags = Constants.DefaultContextualTags;
+                contextualTags = Constants.DefaultContextualTags;
             }
-            if (ContextualTags == null)
+            if (contextualTags == null)
             {
                 KeepContext = false;
-                ContextualTags = new string[0];
+                contextualTags = new string[0];
             }
             else
             {
                 KeepContext = true;
             }
+            ContextualTags = contextualTags;
         }
     }
 }

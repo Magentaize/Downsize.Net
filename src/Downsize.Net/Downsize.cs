@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 
 namespace DownsizeNet
@@ -12,8 +13,8 @@ namespace DownsizeNet
         {
             var stack = new Stack<string>();
             var pointer = 0;
-            var tagBuffer = string.Empty;
-            var truncatedText = string.Empty;
+            var tagBuffer = new StringBuilder();
+            var truncatedText = new StringBuilder();
             var parseState = default(ParseState);
             var trackedState = (UnitCount:0, CountState:false);
 
@@ -23,7 +24,7 @@ namespace DownsizeNet
             {
                 if (parseState != ParseState.Uninitialised)
                 {
-                    tagBuffer += text[pointer];
+                    tagBuffer.Append(text[pointer]);
                 }
 
                 switch (text[pointer])
@@ -41,7 +42,7 @@ namespace DownsizeNet
                                 break;
                             }
                             parseState = ParseState.TagCommenced;
-                            tagBuffer += text[pointer];
+                            tagBuffer.Append(text[pointer]);
                         }
 
                         break;
@@ -92,14 +93,16 @@ namespace DownsizeNet
 
                         break;
                     case '>':
+                        var tagBufferString = tagBuffer.ToString();
+
                         if (parseState == ParseState.TagCommenced)
                         {
                             parseState = ParseState.Uninitialised;
-                            truncatedText += tagBuffer;
-                            var tagName = GetTagName(tagBuffer);
+                            truncatedText.Append(tagBufferString);
+                            var tagName = GetTagName(tagBufferString);
 
                             // Closing tag. (Do we need to be more lenient/)
-                            if (tagBuffer.IsMatch("<\\s*\\/"))
+                            if (tagBufferString.IsMatch("<\\s*\\/"))
                             {
                                 // We don't attempt to walk up the stack to close
                                 // tags. If the text to be truncated contains
@@ -116,13 +119,13 @@ namespace DownsizeNet
 
                                 // Don't push self closing or void elements on to
                                 // the stack, since they have no effect on nesting.
-                                if (Constants.VoidElements.IndexOf(tagName) < 0 && !tagBuffer.IsMatch("\\/\\s*>$"))
+                                if (Constants.VoidElements.IndexOf(tagName) < 0 && !tagBufferString.IsMatch("\\/\\s*>$"))
                                 {
-                                    stack.Push(tagBuffer);
+                                    stack.Push(tagBufferString);
                                 }
                             }
 
-                            tagBuffer = string.Empty;
+                            tagBuffer.Clear();
 
                             // Closed tags are word boundries. Count!
                             if (!IsAtLimit())
@@ -136,8 +139,8 @@ namespace DownsizeNet
                             if (text.Substring(pointer - 2, 2) == "--")
                             {
                                 parseState = ParseState.Uninitialised;
-                                truncatedText += tagBuffer;
-                                tagBuffer = string.Empty;
+                                truncatedText.Append(tagBufferString);
+                                tagBuffer.Clear();
 
                                 // Closed tags are word boundries. Count!
                                 if (!IsAtLimit())
@@ -165,30 +168,30 @@ namespace DownsizeNet
                     Count(text[pointer].ToString());
 
                     // Nope, we still thirst for more.
-                    truncatedText += text[pointer];
+                    truncatedText.Append(text[pointer]);
                 }
             } // end of main parsing for loop
 
             // 'Tock' for word counting happens when next whitespace is added.
             // Strip this and any other trailing whitespace.
-            // TODO: what should the whitespace behavior be?
-            truncatedText = truncatedText.Trim();
+            // TODO: what should the whitespace behavior be?       
+            truncatedText = truncatedText.TrimEnd();
 
             if (options.Append != null && IsAtLimit())
             {
-                truncatedText += options.Append;
+                truncatedText.Append(options.Append);
             }
 
             // Append anything still left in the buffer
-            truncatedText += tagBuffer;
+            truncatedText.Append(tagBuffer);
 
             // Balance anything still left on the stack
             while (stack.Count > 0)
             {
-                truncatedText += CloseTag(stack.Pop());
+                truncatedText.Append(CloseTag(stack.Pop()));
             }
 
-            return truncatedText;
+            return truncatedText.ToString();
 
             bool IsAtLimit()
             {
@@ -208,7 +211,7 @@ namespace DownsizeNet
 
                 for (; stackIndex < stack.Count; stackIndex++)
                 {
-                    if (Convert.ToBoolean(options.ContextualTags.IndexOf(GetTagName(stack.ElementAt(stackIndex)))))
+                    if (Convert.ToBoolean(~options.ContextualTags.IndexOf(GetTagName(stack.ElementAt(stackIndex)))))
                         return false;
                 }
 

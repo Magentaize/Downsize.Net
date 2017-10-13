@@ -1,4 +1,5 @@
-﻿using DownsizeNet;
+﻿using System.Collections.Generic;
+using DownsizeNet;
 using Xunit;
 
 namespace UnitTest
@@ -44,7 +45,8 @@ namespace UnitTest
                 new DownsizeOptions(words: 5));
             Assert.Equal("<p>this < is a <strong>test of</strong></p>", result);
 
-            result= Downsize.Substring("<p>this < is a > test < test > <strong>test of word downsizing</strong> some stuff</p>",
+            result = Downsize.Substring(
+                "<p>this < is a > test < test > <strong>test of word downsizing</strong> some stuff</p>",
                 new DownsizeOptions(words: 5));
             Assert.Equal("<p>this < is a > test < test</p>", result);
         }
@@ -52,7 +54,8 @@ namespace UnitTest
         [Fact]
         void Comments()
         {
-            var result = Downsize.Substring("<p>this <!-- is a > test < test --> <strong>test of word downsizing</strong> some stuff</p>",
+            var result = Downsize.Substring(
+                "<p>this <!-- is a > test < test --> <strong>test of word downsizing</strong> some stuff</p>",
                 new DownsizeOptions(words: 2));
             Assert.Equal("<p>this <!-- is a > test < test --> <strong>test</strong></p>", result);
         }
@@ -83,6 +86,87 @@ namespace UnitTest
             var result = Downsize.Substring("<p>test <unknown> <strong>stuffo</strong> some stuff</p>",
                 new DownsizeOptions(words: 2));
             Assert.Equal("<p>test <unknown> <strong>stuffo</strong></unknown></p>", result);
+        }
+
+        [Fact]
+        void UnescapedCaretsInsideDoubleQuotedStrings()
+        {
+            var result = Downsize.Substring("<p>test string <img \"<stuffo>\"> <strong>stuffo</strong> some stuff</p>",
+                new DownsizeOptions(words: 3));
+            Assert.Equal("<p>test string <img \"<stuffo>\"> <strong>stuffo</strong></p>", result);
+        }
+
+        [Fact]
+        void PermitUnescapedCaretsInsideSingleQuotedStrings()
+        {
+            var result = Downsize.Substring("<p>test string <img '<stuffo>'> <strong>stuffo</strong> some stuff</p>",
+                new DownsizeOptions(words: 3));
+            Assert.Equal("<p>test string <img '<stuffo>'> <strong>stuffo</strong></p>", result);
+        }
+
+        [Fact]
+        void ManuallyClosedElements()
+        {
+            var result = Downsize.Substring(
+                "<p>tag closing test</p><p>There should only</p><p>be one terminating para</p>",
+                new DownsizeOptions(words: 7));
+            Assert.Equal("<p>tag closing test</p><p>There should only</p><p>be</p>", result);
+        }
+
+        [Fact]
+        void UnicodeChar()
+        {
+            var result = Downsize.Substring(
+                "Рэпудёандаэ конжыквуюнтюр эю прё, нэ квуй янжольэнж квюальизквюэ чадипжкёнг. Ед кюм жкрипта",
+                new DownsizeOptions(words: 3));
+            Assert.Equal("Рэпудёандаэ конжыквуюнтюр эю", result);
+        }
+
+        [Fact]
+        void UnicodeCharInTag()
+        {
+            var result = Downsize.Substring(
+                "<p>Рэпудёандаэ конжыквуюнтюр эю прё, <span>нэ квуй янжольэнж квюальизквюэ</span> чадипжкёнг. Ед кюм жкрипта</p>",
+                new DownsizeOptions(words: 3));
+            Assert.Equal("<p>Рэпудёандаэ конжыквуюнтюр эю</p>", result);
+        }
+
+        [Fact]
+        void NoTrailingEmptyTags()
+        {
+            var result = Downsize.Substring("<p>there are five words here</p><i>what</i>",
+                new DownsizeOptions(words: 5));
+            Assert.Equal("<p>there are five words here</p>", result);
+        }
+
+        [Fact]
+        void AwaitTheEndOfTheContainingParagraph()
+        {
+            var result = Downsize.Substring(
+                "<p>there are more than seven words in this paragraph</p><p>this is unrelated</p>",
+                new DownsizeOptions(
+                    words: 7,
+                    contextualTags: new List<string>() {"p", "ul", "ol", "pre", "blockquote"}));
+            Assert.Equal("<p>there are more than seven words in this paragraph</p>", result);
+        }
+
+        [Fact]
+        void AwaitTheEndOfTheContainingUnorderedList()
+        {
+            var result = Downsize.Substring(
+                "<ul><li>item one</li><li>item two</li><li>item three</li></ul><p>paragraph</p>",
+                new DownsizeOptions(
+                    words: 5,
+                    contextualTags: new List<string>() {"p", "ul", "ol", "pre", "blockquote"}));
+            Assert.Equal("<ul><li>item one</li><li>item two</li><li>item three</li></ul>", result);
+        }
+
+        [Fact]
+        void ZeroWordsOption()
+        {
+            var result = Downsize.Substring("<p>this is a <strong>test of word downsizing</strong></p>",
+                new DownsizeOptions(words: 0));
+            Assert.Equal(string.Empty, result);
         }
     }
 }
