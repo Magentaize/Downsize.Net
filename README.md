@@ -1,4 +1,4 @@
-# Downsize.Net [![Build Status](https://ci.appveyor.com/api/projects/status/ebbh5rm22jaj6syr/branch/master?svg=true)
+# Downsize.Net [![Build Status](https://ci.appveyor.com/api/projects/status/ebbh5rm22jaj6syr/branch/master?svg=true)]
 
 Tag-safe HTML and XML text-truncation!
 
