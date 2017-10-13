@@ -2,3 +2,6 @@
  configuration: Release
  before_build:
  - cmd: dotnet restore
+ dotnet_csproj:
+   patch: true
+   file: 'src\Downsize.Net\Downsize.Net.csproj'
