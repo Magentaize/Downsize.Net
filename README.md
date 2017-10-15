@@ -1,5 +1,6 @@
-# Downsize.Net ![Build Status](https://ci.appveyor.com/api/projects/status/ebbh5rm22jaj6syr/branch/master?svg=true)
-
+# Downsize.Net 
+[![Build status](https://img.shields.io/appveyor/ci/Magentaize/downsize-net.svg?style=flat-square)](https://ci.appveyor.com/project/Magentaize/downsize-net)
+[![NuGet](https://img.shields.io/nuget/v/Downsize.Net.svg?style=flat-square)](https://www.nuget.org/packages/Downsize.Net)
 Tag-safe HTML and XML text-truncation!
 
 ```

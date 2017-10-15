@@ -6,6 +6,9 @@ namespace DownsizeNet
 {
     public class DownsizeOptions
     {
+        public const int DefaultTruncationLimit = -1;
+        public const bool DefaultRound = false;
+
         internal string Append { get; set; }
         internal Regex WordChars { get; set; }
         internal CountType CountType { get; set; }
@@ -13,7 +16,7 @@ namespace DownsizeNet
         internal bool KeepContext { get; set; }
         internal int Limit { get; set; }
 
-        public DownsizeOptions(int words = -1, int characters = -1, bool round = false, Regex wordChars = null,
+        public DownsizeOptions(int words = DefaultTruncationLimit, int characters = DefaultTruncationLimit, bool round = DefaultRound, Regex wordChars = null,
             IList<string> contextualTags = null, string append = null)
         {
             Append = append;

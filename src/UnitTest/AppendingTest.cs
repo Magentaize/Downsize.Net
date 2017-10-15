@@ -1,7 +1,6 @@
-﻿using DownsizeNet;
-using Xunit;
+﻿using Xunit;
 
-namespace UnitTest
+namespace DownsizeNet.Test
 {
     public class AppendingTest
     {
